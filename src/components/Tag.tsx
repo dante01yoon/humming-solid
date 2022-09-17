@@ -2,9 +2,6 @@ import { Accessor, createSignal } from "solid-js";
 
 type Size = "small" | "medium" | "large";
 
-export interface TagProps {
-  limitCount?: number;
-}
   
 const reducer = (prevSize: Accessor<Size>, letterCount: number ): Size => {
   if(letterCount <= 50) {
@@ -18,8 +15,14 @@ const reducer = (prevSize: Accessor<Size>, letterCount: number ): Size => {
   return "large";
 }
 
+export interface TagProps {
+  limitCount?: number;
+  disabled?: boolean;
+}
+
 export function Tag({
-  limitCount = 50
+  limitCount = 50,
+  disabled= false,
 }: TagProps) {
   const [getSize, setSize] = createSignal(reducer(() => "small", limitCount))
   const [getCount ,setCount] = createSignal(limitCount);
@@ -45,7 +48,7 @@ export function Tag({
   return (
     <div>
       {
-        state.mode === "edit" ?
+        !disabled && state.mode === "edit" ?
           <div>
             <div>
               <button onClick={() => setSizeAction(state.count - 1)}>-</button>
@@ -55,7 +58,7 @@ export function Tag({
             <div onClick={() => setMode("read")}>done</div>
           </div> : 
           <>
-          <div onClick={() => setMode("edit")}>{state.size}</div>
+          <div onClick={() => !disabled && setMode("edit")}>{state.size}</div>
           </>
     }
     </div>
